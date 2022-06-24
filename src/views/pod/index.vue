@@ -24,17 +24,26 @@
             </template>
             <template v-else-if="column.key === 'containers'">
                 <span>
-                    <a-tag v-for="container in record.spec.containers" :key="container"
-                        :color="container.name === 'loser' ? 'volcano' : container.length > 5 ? 'geekblue' : 'green'">
-                        {{ container.name }}
-                    </a-tag>
+
+                    <a-popover v-for="container in record.spec.containers" trigger="click">
+                        <template #content>
+                            <a @click="showlog(record, container.name)">logs</a> |
+                            <a @click="showTerminal(record, container.name)">terminal</a>
+                        </template>
+                        <a-tag :key="container"
+                            :color="container.name === 'loser' ? 'volcano' : container.length > 5 ? 'geekblue' : 'green'">
+                            {{ container.name }}
+                        </a-tag>
+                    </a-popover>
+
+
                 </span>
             </template>
             <template v-else-if="column.key === 'labels'">
                 <span>
-                    <a-tag v-for="label in record.metadata.labels" :key="label"
-                        :color="label === 'loser' ? 'volcano' : label.length > 5 ? 'geekblue' : 'green'">
-                        {{ label.toUpperCase() }}
+                    <a-tag v-for="(value, key) in record.metadata.labels" :key="value"
+                        :color="value === 'loser' ? 'volcano' : value.length > 5 ? 'geekblue' : 'green'">
+                        {{key}}:{{ value }}
                     </a-tag>
                 </span>
             </template>
@@ -42,8 +51,7 @@
                 <span>
                     <a type="primary" @click="showyaml(record)">yaml</a>&nbsp
                     <a-popconfirm title="Are you sure delete this task?" ok-text="Yes" cancel-text="No"
-                        @confirm="deletePod(record)"> <a href="#">delete</a></a-popconfirm>&nbsp
-                    <a type="primary" @click="showlog(record)">logs</a>
+                        @confirm="deletePod(record)"> <a href="#">delete</a></a-popconfirm>&nbsp;
                 </span>
             </template>
         </template>
@@ -54,7 +62,7 @@
     <a-modal v-model:visible="logVisible" width="800px" title="Basic Modal" @ok="logHandleOk">
         <a-textarea v-model:value="logContent" placeholder="" :auto-size="{ maxRows: 20 }" />
     </a-modal>
-    <AddPod :addVisible="addVisible" @close-model="closeModel"/>
+    <AddPod :addVisible="addVisible" @close-model="closeModel" />
 </template>
 <script setup>
 import { DownOutlined } from '@ant-design/icons-vue';
@@ -64,6 +72,7 @@ import { pretifyJson } from '@/utils/json.js'
 import JsonEditorVue from 'json-editor-vue3'
 import { compileScript } from '@vue/compiler-sfc';
 import AddPod from './components/add_pod.vue'
+import router from '@/router/index.js'
 
 // add model
 var addVisible = ref(false)
@@ -88,8 +97,8 @@ const handleOk = () => {
 const logVisible = ref(false);
 const logContent = ref("")
 
-const showlog = (record) => {
-    podLog(record.metadata.name, { container_name: "nginx-containers", namespace: record.metadata.namespace }).then(res => {
+const showlog = (record, container_name) => {
+    podLog(record.metadata.name, { container_name: container_name, namespace: record.metadata.namespace }).then(res => {
         console.log(res)
         logVisible.value = true
         logContent.value = res.logs
@@ -103,7 +112,20 @@ const logHandleOk = () => {
 // button
 const deletePod = (record) => {
     podDel(record.metadata.name, { namespace: record.metadata.namespace }).then(() => {
-        location.reload()
+        router.go(0)
+    })
+}
+
+// xterm
+
+const showTerminal = (record, name) => {
+    router.push({
+        path:"/pod/terminal",
+        query: {
+            name: record.metadata.name,
+            namespace:record.metadata.namespace,
+            containerName:name,
+        }
     })
 }
 

@@ -38,7 +38,7 @@
         </a-space>
 
         <a-form-item>
-            <a-button type="dashed" block @click="addSight">
+            <a-button type="dashed" block @click="addContainer">
                 <PlusOutlined />
                 Add Container
             </a-button>
@@ -50,6 +50,7 @@
 import { defineProps, ref, defineEmits } from 'vue';
 import { namespaces } from '@/api/ns';
 import { podAdd } from '@/api/pod';
+import router from '@/router/index.js'
 
 let nss = ref([])
 namespaces().then((res) => {
@@ -67,8 +68,10 @@ let props = defineProps({
 
 const addHandleOk = () => {
     podAdd(addPod.value).then(res => {
-        console.log(res)
+        emits("close-model")
+        router.go(0)
     })
+    
 }
 
 var addPod = ref({
@@ -77,7 +80,7 @@ var addPod = ref({
     containers: []
 })
 
-const addSight = () => {
+const addContainer = () => {
     addPod.value.containers.push({
         image: "",
         id: Date.now(),

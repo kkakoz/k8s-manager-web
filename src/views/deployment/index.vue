@@ -1,4 +1,5 @@
 <template>
+    <a-button type="primary" @click="addDeployment">添加</a-button>&nbsp;
     <a-table :columns="columns" :data-source="list">
         <template #headerCell="{ column }">
             <template v-if="column.key === 'name'">
@@ -43,14 +44,22 @@
         </template>
     </a-table>
     <a-modal v-model:visible="visible" width="800px" title="Basic Modal" @ok="handleOk">
-        <JsonEditorVue class="editor" v-model="yamlContent" language="zh-CN"/>
+        <JsonEditorVue class="editor" v-model="yamlContent" language="zh-CN" />
     </a-modal>
 </template>
 <script setup>
 import { DownOutlined } from '@ant-design/icons-vue';
 import { ref } from 'vue';
 import { deployments } from '@/api/deployment.js';
-import JsonEditorVue from 'json-editor-vue3'
+import JsonEditorVue from 'json-editor-vue3';
+import router from '@/router/index.js';
+
+const addDeployment = () => {
+    router.push({
+        path: "/deployment/add",
+    })
+}
+
 var list = ref([])
 const visible = ref(false);
 

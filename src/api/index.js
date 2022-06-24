@@ -8,7 +8,7 @@ axios.defaults.timeout = 60000;
 
 // 请求地址，这里是动态赋值的的环境变量，下一篇会细讲，这里跳过
 // @ts-ignore
-axios.defaults.baseURL = "http://172.19.173.145:9010/api";
+axios.defaults.baseURL = "http://172.18.217.216:9010/api";
 // import.meta.env.VITE_API_DOMAIN;
 
 //http request 拦截器
@@ -25,6 +25,13 @@ axios.interceptors.request.use(
                 'Content-Type': 'application/json;charset=UTF-8', // 传参方式json
             };
         }
+        let localNs = localStorage.getItem("namespace")
+
+        if (localNs) {
+            config.headers.Namespace = localNs
+        }
+        
+
         return config;
     },
     error => {
