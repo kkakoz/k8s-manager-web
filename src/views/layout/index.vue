@@ -17,10 +17,7 @@
 <script setup>
 import Header from './header/index.vue'
 import SideBar from './side_bar/index.vue'
-import { namespaces } from '../../api/ns';
 
-namespaces().then((res) => {
-    console.log(res)
-})
+
 
 </script>

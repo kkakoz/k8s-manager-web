@@ -6,9 +6,7 @@ import { message } from 'ant-design-vue';
 // 设置接口超时时间
 axios.defaults.timeout = 60000;
 
-// 请求地址，这里是动态赋值的的环境变量，下一篇会细讲，这里跳过
-// @ts-ignore
-axios.defaults.baseURL = "http://172.18.217.216:9010/api";
+axios.defaults.baseURL = "http://172.19.94.246:9010/api";
 // import.meta.env.VITE_API_DOMAIN;
 
 //http request 拦截器
@@ -91,6 +89,18 @@ export function get(url, params) {
 export function post(url, params) {
     return new Promise((resolve, reject) => {
         axios.post(url, params)
+            .then(res => {
+                resolve(res);
+            })
+            .catch(err => {
+                reject(err)
+            })
+    });
+}
+
+export function put(url, params) {
+    return new Promise((resolve, reject) => {
+        axios.put(url, params)
             .then(res => {
                 resolve(res);
             })

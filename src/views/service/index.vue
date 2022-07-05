@@ -16,11 +16,22 @@
             <template v-else-if="column.key === 'namespace'">
                 {{ record.metadata.namespace }}
             </template>
-            <template v-else-if="column.key === 'readyReplicas'">
-                {{ record.status.readyReplicas }}
+            <template v-else-if="column.key === 'clusterips'">
+                <span>
+                    <a-tag v-for="label in record.spec.clusterIPs" :key="label"
+                        :color="label === 'loser' ? 'volcano' : label.length > 5 ? 'geekblue' : 'green'">
+                        {{ label.toUpperCase() }}
+                    </a-tag>
+                </span>
             </template>
-            <template v-else-if="column.key === 'replicas'">
-                {{ record.spec.replicas }}
+            <template v-else-if="column.key === 'port'">
+                <span>
+                    <a-tag v-for="label in record.spec.ports" :key="label"
+                        :color="label === 'loser' ? 'volcano' : label.length > 5 ? 'geekblue' : 'green'">
+                        {{ label }}
+                    </a-tag>
+                </span>
+
             </template>
             <template v-else-if="column.key === 'labels'">
                 <span>
@@ -33,8 +44,7 @@
             <template v-else-if="column.key === 'action'">
                 <span>
                     <a @click="showModal(record)">yaml</a>|
-                    <a>Delete</a>|
-                    <a @click="restart(record)">restart</a>
+                    <a>Delete</a>|  
                 </span>
             </template>
         </template>
@@ -46,15 +56,10 @@
 <script setup>
 import { DownOutlined } from '@ant-design/icons-vue';
 import { ref } from 'vue';
-import { deployments, deploymentRestart } from '@/api/deployment.js';
+import { services } from '@/api/service.js';
 import JsonEditorVue from 'json-editor-vue3';
 import router from '@/router/index.js';
 
-const addDeployment = () => {
-    router.push({
-        path: "/deployment/add",
-    })
-}
 
 var list = ref([])
 const visible = ref(false);
@@ -75,7 +80,7 @@ const handleOk = () => {
     console.log(yamlContent)
 }
 
-deployments().then(res => {
+services().then(res => {
     res.items.forEach(element => {
         list.value.push(element)
     });
@@ -93,14 +98,14 @@ const columns = [{
     title: 'Labels',
     key: 'labels',
     dataIndex: 'labels',
-},{
-    title: 'Replicas',
-    dataIndex: 'replicas',
-    key: 'replicas',
-},  {
-    title: 'ReadyReplicas',
-    key: 'readyReplicas',
-    dataIndex: 'readyReplicas',
+}, {
+    title: 'ClusterIPs',
+    dataIndex: 'clusterips',
+    key: 'clusterips',
+}, {
+    title: 'Port',
+    key: 'port',
+    dataIndex: 'port',
 }, {
     title: 'Action',
     key: 'action',

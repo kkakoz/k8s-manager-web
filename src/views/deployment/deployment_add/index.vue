@@ -153,7 +153,10 @@ const add = () => {
     labels.value.forEach(element => {
         addDeployment.value.labels[element.key] = element.value
     });
-    deploymentAdd(addDeployment.value)
+    deploymentAdd(addDeployment.value).then(()=> {
+        router.push("")
+    
+    })
 }
 
 const addLabel = () => {

@@ -8,6 +8,8 @@ import Deployment from '@/views/deployment/index.vue'
 import DeploymentAdd from '@/views/deployment/deployment_add/index.vue'
 import Terminal from '@/views/terminal/index.vue';
 import Secret from '@/views/secret/index.vue'; 
+import Service from '@/views/service/index.vue'
+import Ingress from '@/views/ingress/index.vue'
 
 const routes = [
     {
@@ -40,6 +42,13 @@ const routes = [
         },
     },
     {
+        path: '/service',
+        component: Service,
+        meta: {
+            title: 'Service'
+        },
+    },
+    {
         path: '/deployment/add',
         component: DeploymentAdd,
         meta: {
@@ -51,6 +60,13 @@ const routes = [
         component: Secret,
         meta: {
             title: 'Deployment'
+        },
+    },
+    {
+        path: '/ingress',
+        component: Ingress,
+        meta: {
+            title: 'Ingress'
         },
     },
 ];
